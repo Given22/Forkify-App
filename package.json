@@ -1,0 +1,32 @@
+{
+  "name": "forkify-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "controller.js",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Given22/Forkify-App.git"
+  },
+  "author": "Damian Sroczyński",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Given22/Forkify-App/issues"
+  },
+  "homepage": "https://github.com/Given22/Forkify-App#readme",
+  "dependencies": {
+    "core-js": "^3.22.8",
+    "parcel": "^2.6.0",
+    "regenerator-runtime": "^0.13.9",
+    "sass": "^1.52.1"
+  },
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.6.0",
+    "querystring-es3": "^0.2.1",
+    "url": "^0.11.0"
+  }
+}
