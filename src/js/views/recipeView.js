@@ -1,5 +1,5 @@
 import icons from '../../img/icons.svg';
-import {Fraction} from 'fractional';
+import { Fraction } from 'fractional';
 
 class RecipeView {
   #parentElement = document.querySelector('.recipe');
@@ -10,7 +10,33 @@ class RecipeView {
     this.#clear();
     this.#parentElement.insertAdjacentHTML('afterbegin', markup);
   }
-  
+
+  update(data) {
+    if (!data || (Array.isArray(data) && data.length === 0))
+      return this.renderError();
+
+    this.#data = data;
+    const newMarkup = this.#generateMarkup();
+
+    const newDOM = document.createRange().createContextualFragment(newMarkup);
+    const newElements = newDOM.querySelectorAll('*');
+    const curElements = this.#parentElement.querySelectorAll('*');
+
+    newElements.forEach((newElement, index) => {
+      const curElement = curElements[index];
+
+      if (!newElement.isEqualNode(curElement) && newElement.firstChild?.nodeValue.trim() !== '') {
+        curElement.textContent = newElement.textContent;
+      }
+      
+      if (!newElement.isEqualNode(curElement)) {
+        Array.from(newElement.attributes).forEach(attr => {
+          curElement.setAttribute(attr.name, attr.value)
+        })
+      }
+    });
+  }
+
   renderError(error) {
     const markup = `
     <div class="error">
@@ -21,7 +47,7 @@ class RecipeView {
       </div>
       <p>${error}</p>
     </div> `;
-  
+
     this.#clear();
     this.#parentElement.insertAdjacentHTML('afterbegin', markup);
   }
@@ -36,18 +62,26 @@ class RecipeView {
     this.#clear();
     this.#parentElement.insertAdjacentHTML('afterbegin', markup);
   }
-  
+
   addHandlerUpdateServings(handler) {
-    this.#parentElement.addEventListener('click', function(event) {
+    this.#parentElement.addEventListener('click', function (event) {
       const btn = event.target.closest('.btn--tiny');
-      
-      if(!btn) return
+
+      if (!btn) return;
       const serv = +btn.dataset.serv;
       handler(serv);
     });
   }
   
-  addHandlerRender(handler){
+  addHandlerBookmark(handler) {
+    this.#parentElement.addEventListener('click', function (event) {
+      const btn = event.target.closest('.btn--bookmark');
+      if (!btn) return;
+      handler()
+    })
+  }
+
+  addHandlerRender(handler) {
     ['hashchange', 'load'].forEach(event =>
       window.addEventListener(event, handler)
     );
@@ -56,14 +90,16 @@ class RecipeView {
   #clear() {
     this.#parentElement.innerHTML = '';
   }
-  
+
   #generateMarkupIngredients(data) {
     return `
       <li class="recipe__ingredient">
         <svg class="recipe__icon">
           <use href="${icons}#icon-check"></use>
         </svg>
-        <div class="recipe__quantity">${data.quantity ? new Fraction(data.quantity).toString() : ''}</div>
+        <div class="recipe__quantity">${
+          data.quantity ? new Fraction(data.quantity).toString() : ''
+        }</div>
         <div class="recipe__description">
           <span class="recipe__unit">${data.unit || ''}</span>
           ${data.description}
@@ -102,12 +138,16 @@ class RecipeView {
         <span class="recipe__info-text">servings</span>
   
         <div class="recipe__info-buttons">
-          <button class="btn--tiny btn--increase-servings" data-serv=${this.#data.servings - 1}>
+          <button class="btn--tiny btn--increase-servings" data-serv=${
+            this.#data.servings - 1
+          }>
             <svg>
               <use href="${icons}#icon-minus-circle"></use>
             </svg>
           </button>
-          <button class="btn--tiny btn--increase-servings" data-serv=${this.#data.servings + 1}>
+          <button class="btn--tiny btn--increase-servings" data-serv=${
+            this.#data.servings + 1
+          }>
             <svg>
               <use href="${icons}#icon-plus-circle"></use>
             </svg>
@@ -115,12 +155,14 @@ class RecipeView {
         </div>
       </div>
   
-      <div class="recipe__user-generated">
-        
+      <div class="recipe__user-generated ${this.#data.key? '' : 'hidden'}">
+        <svg>
+          <use href="${icons}#icon-user"></use>
+        </svg>
       </div>
-      <button class="btn--round">
+      <button class="btn--round btn--bookmark">
         <svg class="">
-          <use href="${icons}#icon-bookmark-fill"></use>
+          <use href="${icons}#icon-bookmark${this.#data.bookmarked ? '-fill' : ''}"></use>
         </svg>
       </button>
     </div>

@@ -1,4 +1,4 @@
-import { TIMEOUT_SECONDS } from "./config";
+import { TIMEOUT_SECONDS } from './config';
 
 const timeout = function (s) {
   return new Promise(function (_, reject) {
@@ -8,18 +8,26 @@ const timeout = function (s) {
   });
 };
 
-export const getJSON = async url => {
-  try {
-    const res = await Promise.race([fetch(url), timeout(TIMEOUT_SECONDS)]);
-    const data = await res.json();
+export const AJAX = async function (url, uploadData = undefined) {
+  const ferchPro = uploadData
+    ? fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(uploadData),
+      })
+    : fetch(url);
+    
 
-    if (!res.ok)
-      throw new Error(
-        `Request failed with status ${res.status}, and ${data.message}`
-      );
+  const res = await Promise.race([ferchPro, timeout(TIMEOUT_SECONDS)]);
+  const data = await res.json();
 
-    return data;
-  } catch (e) {
-    throw e;
+  if (!res.ok) {
+    throw new Error(
+      `Request failed with status ${res.status}, and ${data.message}`
+    );
   }
+
+  return data;
 };

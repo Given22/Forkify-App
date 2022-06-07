@@ -231,6 +231,7 @@ body {
 
 .message, .error {
   max-width: 40rem;
+  align-items: center;
   margin: 0 auto;
   padding: 5rem 4rem;
   display: flex;

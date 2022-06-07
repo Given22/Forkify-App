@@ -1,22 +1,22 @@
 import icons from '../../img/icons.svg';
 
-export default new class RecipesListView {
-  #parentElement = document.querySelector('.results');
+export default new (class RecipesListView {
+  #parentElement = document.querySelector('.bookmarks__list');
   #data;
 
   render(data) {
     this.#data = data;
     this.#clear();
-    
-    console.log(data)
 
-    data
-      .forEach(recipe =>
+    if (this.#data.length === 0) this.renderError();
+    else {
+      data.forEach(recipe =>
         this.#parentElement.insertAdjacentHTML(
           'afterbegin',
           this.#generateMarkup(recipe)
         )
       );
+    }
   }
 
   renderError(error) {
@@ -24,10 +24,10 @@ export default new class RecipesListView {
     <div class="error">
       <div>
         <svg>
-          <use href="${icons}#icon-alert-triangle"></use>
+          <use href="${icons}#icon-smile"></use>
         </svg>
       </div>
-      <p>${error}</p>
+      <p>No bookmarks yet. Find a nice recipe and bookmark it :)</p>
     </div> `;
 
     this.#clear();
@@ -44,7 +44,7 @@ export default new class RecipesListView {
     this.#clear();
     this.#parentElement.insertAdjacentHTML('afterbegin', markup);
   }
-  
+
   update(data) {
     if (!data || (Array.isArray(data) && data.length === 0))
       return this.renderError();
@@ -59,14 +59,17 @@ export default new class RecipesListView {
     newElements.forEach((newElement, index) => {
       const curElement = curElements[index];
 
-      if (!newElement.isEqualNode(curElement) && newElement?.firstChild.nodeValue.trim() !== '') {
+      if (
+        !newElement.isEqualNode(curElement) &&
+        newElement?.firstChild.nodeValue.trim() !== ''
+      ) {
         curElement.textContent = newElement.textContent;
       }
-      
+
       if (!newElement.isEqualNode(curElement)) {
         Array.from(newElement.attributes).forEach(attr => {
-          curElement.setAttribute(attr.name, attr.value)
-        })
+          curElement.setAttribute(attr.name, attr.value);
+        });
       }
     });
   }
@@ -85,13 +88,8 @@ export default new class RecipesListView {
         <div class="preview__data">
           <h4 class="preview__title">${recipe.title}</h4>
           <p class="preview__publisher">${recipe.publisher}</p>
-          <div class="preview__user-generated ${recipe.key? '' : 'hidden'}">
-            <svg>
-              <use href="${icons}#icon-user"></use>
-            </svg>
-          </div>
         </div>
       </a>
     </li>`;
   }
-}
+})();
