@@ -11,7 +11,7 @@ A cookbook, combined with Jonas Schmedtmann's API, contains recipes, namely the 
 
 ## Live
 
-  https://github.com/Given22/Forkify-App
+  https://forkify-damian-s.netlify.app
 
 ## Technologies
   
