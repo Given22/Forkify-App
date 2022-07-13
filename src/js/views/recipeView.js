@@ -99,7 +99,7 @@ class RecipeView {
           <use href="${icons}#icon-check"></use>
         </svg>
         <div class="recipe__quantity">${
-          data.quantity ? fracty(ing.quantity).toString() : ''
+          data.quantity ? fracty(data.quantity).toString() : ''
         }</div>
         <div class="recipe__description">
           <span class="recipe__unit">${data.unit || ''}</span>
