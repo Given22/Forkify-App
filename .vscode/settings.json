@@ -1,3 +1,4 @@
 {
-  "docwriter.style": "NumPy"
+  "docwriter.style": "NumPy",
+  "liveServer.settings.port": 5501
 }
